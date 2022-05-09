@@ -1,10 +1,11 @@
 function Run-Excel-Macro {
     [CmdletBinding()]
+
     param (
         [parameter(Mandatory)]
         [ValidateScript( {
                 Try {
-                    If (Test-Path -Path $_) { $True }
+                    If ((Test-Path -Path $_) -and ($_ -match "\.xla$")) { $True }
                     Else { Throw "$($_) is not a valid Macro path!" }
                 }
                 Catch {
@@ -15,7 +16,7 @@ function Run-Excel-Macro {
         [parameter(Mandatory)]
         [ValidateScript( {
                 Try {
-                    If (Test-Path -Path $_) { $True }
+                    If ((Test-Path -Path $_) -and ($_ -match "\.(xls[xm]?|xml|csv)$")) { $True }
                     Else { Throw "$($_) is not a valid Workbook path!" }
                 }
                 Catch {
@@ -25,6 +26,27 @@ function Run-Excel-Macro {
         [string]$workbookPath,
         [parameter(Mandatory)][ValidateNotNullorEmpty()][string]$macroName
     )
+
+        <# 
+	.SYNOPSIS
+
+	Loads a macro file and runs a specified macro on the specied Excel
+
+	.DESCRIPTION
+
+    Loads a macro file and runs a specified macro on the specied Excel
+    
+    .PARAMETER MacroPath
+    Specifies the path to the Macro Excel file (*.xla)
+    .PARAMETER workbookPath
+    Specifies the path to the Macro Excel file (e.g. *.xlsx)
+    .PARAMETER macroName
+    Specifies the name of the macro
+
+	.EXAMPLE
+	PS> . .\Run-Excel-Macro.ps1
+	PS> Search-Excel-Report '.\my-macro.xla' '.\my-excel.xlsx' 'macro_name'
+#>
 
     try {
         $MacroPath = Resolve-Path $MacroPath
